@@ -56,7 +56,12 @@
               placement="top"
               :enterable="false"
             >
-              <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
+              <el-button
+                type="warning"
+                icon="el-icon-setting"
+                size="mini"
+                @click="showSetRoleDialog(scope.row)"
+              ></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -120,6 +125,34 @@
         <el-button type="primary" @click="editUserInfo">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 分配角色对话框 -->
+    <el-dialog
+      title="为用户分配角色"
+      :visible.sync="setRoleDialogVisible"
+      width="50%"
+      @close="setRoleDialogClosed"
+    >
+      <div>
+        <p>当前的用户：{{userInfo.username}}</p>
+        <p>当前的角色：{{userInfo.role_name}}</p>
+        <p>
+          新分配的角色：
+          <el-select v-model="newRoleID" placeholder="请选择">
+            <el-option
+              v-for="item in roleList"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </p>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="setRoleDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="setUserRole(userInfo.id)">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -164,6 +197,8 @@ export default {
       },
       editForm: {
       },
+      // 分配角色对话框的可见和隐藏控制
+      setRoleDialogVisible: false,
       // 添加用户的表但验证规则
       addFormRules: {
         username: [
@@ -192,7 +227,11 @@ export default {
           { required: true, message: '请输入电话号码', trigger: 'blur' },
           { validator: checkMobile, trigger: 'blur' }
         ]
-      }
+      },
+      userInfo: {},
+      roleList: [],
+      // 新分配的角色名称
+      newRoleID: ''
     }
   },
   created () {
@@ -252,7 +291,7 @@ export default {
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.$message.success(res.meta.msg)
       this.editForm = res.data
-      console.log(res)
+      // console.log(res)
       this.editDialogVisible = true
     },
     editUserInfo () {
@@ -274,7 +313,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).catch(err => err)
-      console.log(confirmResult)
+      // console.log(confirmResult)
       if (confirmResult === 'confirm') {
         const { data: res } = await this.$http.delete('users/' + id)
         if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
@@ -283,6 +322,33 @@ export default {
       } else {
         this.$message.info('已取消删除')
       }
+    },
+    // 显示分配角色对话框
+    showSetRoleDialog (userInfo) {
+      this.userInfo = userInfo
+      this.getRolesList()
+      this.setRoleDialogVisible = true
+      // console.log(userInfo)
+    },
+    // 获取角色列表
+    async getRolesList () {
+      const { data: res } = await this.$http.get('roles')
+      if (res.meta.status !== 200) this.$message.error(res.meta.msg)
+      this.$message.success(res.meta.msg)
+      this.roleList = res.data
+      // console.log(this.roleList)
+    },
+    async setUserRole (Uid) {
+      // console.log(Uid, this.newRoleID)
+      const { data: res } = await this.$http.put(`users/${Uid}/role`, { rid: this.newRoleID })
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.$message.success(res.meta.msg)
+      this.getUserList()
+      this.setRoleDialogVisible = false
+    },
+    setRoleDialogClosed () {
+      this.newRoleID = ''
+      this.userInfo = {}
     }
   }
 }

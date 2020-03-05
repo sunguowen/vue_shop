@@ -72,7 +72,7 @@
               type="warning"
               icon="el-icon-setting"
               size="mini"
-              @click="showSetRightDialog(scope.row.children)"
+              @click="showSetRightDialog(scope.row)"
             >分配权限</el-button>
           </template>
         </el-table-column>
@@ -89,7 +89,7 @@
       <!-- 树形控件 -->
       <el-tree
         :default-expand-all="true"
-        :default-checked-keys="selectedRightList"
+        :default-checked-keys="[]"
         :data="rightsList"
         show-checkbox
         ref="rightTreeRef"
@@ -98,7 +98,7 @@
       ></el-tree>
       <span slot="footer" class="dialog-footer">
         <el-button @click="setRightDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="setRightDialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="allotRights">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -108,6 +108,8 @@
 export default {
   data () {
     return {
+      // 角色ID
+      rolesID: '',
       // 所有角色的列表
       rolesList: [],
       // 所有权限的列表
@@ -150,21 +152,15 @@ export default {
       // console.log(confirmResult)
     },
     // 展示分配权限的对话框
-    showSetRightDialog (rightsInfo) {
+    showSetRightDialog (rolesInfo) {
+      this.rolesID = rolesInfo.id
       // this.selectedRightList = []
-      this.getRightsId(rightsInfo)
+      this.getRightsId(rolesInfo.children)
       this.setRightDialogVisible = true
       var that = this
-      setTimeout(() => {
-        that.selectedRightList.forEach((value) => {
-          that.$refs.rightTreeRef.setChecked(value, true, false)
-        })
-      }, 100)
-      //  setTimeout(function () {
-      //  that.default_select.forEach((value)=>{
-      //   that.$refs.tree.setChecked(value,true,false)
-      //  });
-      // },100);
+      this.$nextTick(() => {
+        this.$refs.rightTreeRef.setCheckedKeys(that.selectedRightList)
+      })
       console.log(this.selectedRightList)
     },
     // 获取所有权限列表
@@ -187,6 +183,19 @@ export default {
     },
     setRightDialogClose () {
       this.selectedRightList = []
+    },
+    async allotRights () {
+      const keys = [
+        ...this.$refs.rightTreeRef.getCheckedKeys(),
+        ...this.$refs.rightTreeRef.getHalfCheckedKeys()
+      ]
+      console.log(keys)
+      const idString = keys.join(',')
+      const { data: res } = await this.$http.post(`roles/${this.rolesID}/rights`, { rids: idString })
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.$message.success(res.meta.msg)
+      this.getRolesList()
+      this.setRightDialogVisible = false
     }
   }
 }
