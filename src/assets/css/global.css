@@ -1,14 +1,24 @@
 /* 全局样式 */
-html,body,#app{
-    height: 100%;
-    margin: 0;
-    padding: 0;
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  min-width: 1366px;
 }
 .el-breadcrumb {
-    margin-bottom: 20px;
-    font-size: 12px;
+  margin-bottom: 20px;
+  font-size: 12px;
 }
-.el-pagination{
-    margin-top: 20px;
-    padding: 0;
+.el-pagination {
+  margin-top: 20px;
+  padding: 0;
 }
+.el-table {
+  margin-top: 20px;
+}
+
+/* .el-card {
+  margin-top: 20px;
+} */
