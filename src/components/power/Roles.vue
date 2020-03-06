@@ -11,7 +11,7 @@
       <!-- 添加用户区 -->
       <el-row>
         <el-col :span="6">
-          <el-button type="primary">添加角色</el-button>
+          <el-button type="primary" @click="showAddRoleDialog">添加角色</el-button>
         </el-col>
       </el-row>
       <!-- 角色列表表格 -->
@@ -66,8 +66,18 @@
         <el-table-column prop="roleDesc" label="角色描述"></el-table-column>
         <el-table-column label="操作" width="300px">
           <template slot-scope="scope">
-            <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
-            <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+            <el-button
+              type="primary"
+              icon="el-icon-edit"
+              size="mini"
+              @click="showMidfyRoleDialog(scope.row)"
+            >编辑</el-button>
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              @click="deleteRole(scope.row)"
+            >删除</el-button>
             <el-button
               type="warning"
               icon="el-icon-setting"
@@ -101,6 +111,58 @@
         <el-button type="primary" @click="allotRights">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- 添加角色的对话框 -->
+    <el-dialog
+      title="添加角色"
+      :visible.sync="addRoleDialogVisible"
+      width="50%"
+      @close="addRoleDialogClosed"
+    >
+      <!-- 添加角色的表单 -->
+      <el-form
+        :model="addRoleForm"
+        :rules="addRoleFormRoles"
+        ref="addRoleFormRef"
+        label-width="100px"
+      >
+        <el-form-item label="角色名称" prop="roleName">
+          <el-input v-model="addRoleForm.roleName"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述" prop="roleDesc">
+          <el-input v-model="addRoleForm.roleDesc"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addRoleDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addRole">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 修改角色的对话框 -->
+    <el-dialog
+      title="编辑角色"
+      :visible.sync="modifyRoleDialogVisible"
+      width="50%"
+      @close="modifyRoleDialogClosed"
+    >
+      <!-- 修改角色的表单 -->
+      <el-form
+        :model="modifyRoleForm"
+        ref="modifyRoleFormRef"
+        :rules="modifyRoleRules"
+        label-width="100px"
+      >
+        <el-form-item label="角色名称" prop="roleName">
+          <el-input disabled v-model="modifyRoleForm.roleName"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述" prop="roleDesc">
+          <el-input v-model="modifyRoleForm.roleDesc"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="modifyRoleDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="modifyRole">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -120,7 +182,36 @@ export default {
         children: 'children',
         label: 'authName'
       },
-      setRightDialogVisible: false
+      setRightDialogVisible: false,
+      // 空中添加角色对话框的显示与隐藏
+      addRoleDialogVisible: false,
+      // 添加角色的表单绑定数据
+      addRoleForm: {
+        roleName: '',
+        roleDesc: ''
+      },
+      // 添加角色的验证规则对象
+      addRoleFormRoles: {
+        roleName: [
+          { required: true, message: '请输入角色名称', trigger: 'blur' }
+        ],
+        roleDesc: [
+          { required: true, message: '请填写角色描述', trigger: 'blur' }
+        ]
+      },
+      // 编辑角色对话狂的显示与隐藏
+      modifyRoleDialogVisible: false,
+      modifyRoleRules: {
+        roleDesc: [
+          { required: true, message: '请填写相关描述', trigger: 'blur' }
+        ]
+      },
+      // 编辑角色是对应的表单数据
+      modifyRoleID: '',
+      modifyRoleForm: {
+        roleName: '',
+        roleDesc: ''
+      }
     }
   },
   created () {
@@ -196,6 +287,60 @@ export default {
       this.$message.success(res.meta.msg)
       this.getRolesList()
       this.setRightDialogVisible = false
+    },
+    // 显示添加用户对话框
+    showAddRoleDialog () {
+      this.addRoleDialogVisible = true
+    },
+    // 添加角色
+    addRole () {
+      this.$refs.addRoleFormRef.validate(async valid => {
+        if (!valid) return this.$message.warning('填写内容验证未通过')
+        const { data: res } = await this.$http.post('roles', this.addRoleForm)
+        if (res.meta.status !== 201) return this.$message.error(res.meta.msg)
+        this.$message.success(res.meta.msg)
+        this.getRolesList()
+        this.addRoleDialogVisible = false
+      })
+    },
+    // 添加角色对话框关闭时调用
+    addRoleDialogClosed () {
+      this.addRoleForm.roleName = ''
+      this.addRoleForm.roleDesc = ''
+    },
+    async showMidfyRoleDialog (roleInfo) {
+      const { data: res } = await this.$http.get('roles/' + roleInfo.id)
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.modifyRoleID = roleInfo.id
+      this.modifyRoleForm.roleName = res.data.roleName
+      this.modifyRoleForm.roleDesc = res.data.roleDesc
+      this.modifyRoleDialogVisible = true
+    },
+    async modifyRole () {
+      const { data: res } = await this.$http.put('roles/' + this.modifyRoleID, this.modifyRoleForm)
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.$message.success(res.meta.msg)
+      this.getRolesList()
+      this.modifyRoleDialogVisible = false
+    },
+    modifyRoleDialogClosed () {
+      this.modifyRoleForm.roleName = ''
+      this.modifyRoleForm.roleDesc = ''
+      this.modifyRoleID = ''
+      this.$refs.modifyRoleFormRef.resetField()
+    },
+    async deleteRole (roleInfo) {
+      const confirmResult = await this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+      console.log(confirmResult)
+      if (confirmResult !== 'confirm') return this.$message.info('取消了删除操作')
+      const { data: res } = await this.$http.delete('roles/' + roleInfo.id)
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.$message.success(res.meta.msg)
+      this.getRolesList()
     }
   }
 }
