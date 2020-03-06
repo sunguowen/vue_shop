@@ -18,7 +18,9 @@ body,
 .el-table {
   margin-top: 20px;
 }
-
+.el-cascader-menu {
+  height: 300px;
+}
 /* .el-card {
   margin-top: 20px;
 } */
