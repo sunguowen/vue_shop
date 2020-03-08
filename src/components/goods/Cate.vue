@@ -97,7 +97,7 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       // 请求信息
       queryInfo: {
@@ -140,36 +140,36 @@ export default {
       selectKeys: []
     }
   },
-  created () {
+  created() {
     this.getGoodsCateList()
   },
   methods: {
-    async getGoodsCateList () {
+    async getGoodsCateList() {
       const { data: res } = await this.$http.get('categories', { params: this.queryInfo })
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.$message.success(res.meta.msg)
       this.goodsCateList = res.data.result
       this.goodsCateTotal = res.data.total
     },
-    editGoodsCate (cateInfo) {
+    editGoodsCate(cateInfo) {
       // console.log(cateInfo.cat_id)
     },
-    handleSizeChange (newPageSize) {
+    handleSizeChange(newPageSize) {
       this.queryInfo.pagesize = newPageSize
       this.getGoodsCateList()
       // console.log(newPageSize)
     },
-    handleCurrentChange (newPageNum) {
+    handleCurrentChange(newPageNum) {
       this.queryInfo.pagenum = newPageNum
       this.getGoodsCateList()
     },
     // 展示添加分类对话框
-    showAddGoodsCateDialog () {
+    showAddGoodsCateDialog() {
       this.getGoodsCateListFS()
       this.addGoodsCateDialogVisible = true
     },
     // 获取一二级分类数据
-    async getGoodsCateListFS () {
+    async getGoodsCateListFS() {
       const { data: res } = await this.$http.get('categories', { params: { type: 2 } })
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.$message.success(res.meta.msg)
@@ -177,7 +177,7 @@ export default {
       this.firstAndSecondCateList = res.data
     },
     // x选择项发生变化触发这个函数
-    parentCateChange () {
+    parentCateChange() {
       console.log(this.selectKeys)
       if (this.selectKeys.length > 0) {
         this.addCateForm.cat_pid = this.selectKeys[this.selectKeys.length - 1]
@@ -188,7 +188,7 @@ export default {
       }
       console.log(this.addCateForm.pid, this.addCateForm.cat_level)
     },
-    async addGoodsCate () {
+    async addGoodsCate() {
       const { data: res } = await this.$http.post('categories', this.addCateForm)
       console.log(res)
       if (res.meta.status !== 201) return this.$message.error(res.meta.msg)
@@ -196,7 +196,7 @@ export default {
       this.getGoodsCateList()
       this.addGoodsCateDialogVisible = false
     },
-    addGoodsCateDialogClosed () {
+    addGoodsCateDialogClosed() {
       console.log('我清空了表单数据')
       this.$refs.addCateFormRef.resetFields()
       this.selectKeys = []
