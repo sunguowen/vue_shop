@@ -32,7 +32,9 @@ import {
   Cascader,
   Alert,
   Tabs,
-  TabPane
+  TabPane,
+  Steps,
+  Step
 } from 'element-ui'
 // import { Input } from 'element-ui'
 
@@ -66,5 +68,7 @@ Vue.use(Cascader)
 Vue.use(Alert)
 Vue.use(TabPane)
 Vue.use(Tabs)
+Vue.use(Steps)
+Vue.use(Step)
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm
