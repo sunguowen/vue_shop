@@ -28,15 +28,37 @@
         :rules="addGoodsFormRules"
         ref="addGoodsFormRef"
         label-width="100px"
+        label-position="top"
       >
-        <el-tabs v-model="activeStep" tab-position="left" style="height: 200px;">
-          <el-tab-pane label="基本信息" name="0">基本信息区域</el-tab-pane>
-          <el-tab-pane label="商品参数" name="1">配置管理</el-tab-pane>
+        <el-tabs v-model="activeStep" tab-position="left" :before-leave="beforeTabsLeave">
+          <el-tab-pane label="基本信息" name="0">
+            <el-form-item label="商品名称" prop="goods_name">
+              <el-input v-model="addGoodsForm.goods_name"></el-input>
+            </el-form-item>
+            <el-form-item label="商品价格" prop="goods_price">
+              <el-input v-model="addGoodsForm.goods_price" type="number"></el-input>
+            </el-form-item>
+            <el-form-item label="商品重量" prop="goods_weight">
+              <el-input v-model="addGoodsForm.goods_weight" type="number"></el-input>
+            </el-form-item>
+            <el-form-item label="商品数量" prop="goods_number">
+              <el-input v-model="addGoodsForm.goods_number" type="number"></el-input>
+            </el-form-item>
+            <el-form-item label="商品分类" prop="goods_cat">
+              <el-cascader
+                v-model="addGoodsForm.goods_cat"
+                :options="cateList"
+                :props="props"
+                @change="handleChange"
+              ></el-cascader>
+            </el-form-item>
+          </el-tab-pane>
+          <el-tab-pane label="商品参数" name="1"></el-tab-pane>
           <el-tab-pane label="商品属性" name="2">角色管理</el-tab-pane>
           <el-tab-pane label="商品图片" name="3">定时任务补偿</el-tab-pane>
           <el-tab-pane label="商品内容" name="4">定时任务补偿</el-tab-pane>
         </el-tabs>
-      </el-tab-pane>
+      </el-form>
     </el-card>
   </div>
 </template>
@@ -48,14 +70,67 @@ export default {
       // 完成的步骤的索引
       activeStep: '0',
       // 添加商品的表单数据对象
-      addGoodsForm:{
+      addGoodsForm: {
+        goods_name: '',
+        goods_price: 0,
+        goods_number: 0,
+        goods_weight: 0,
+        goods_cat: []
       },
       // 添加商品表单验证规则
-      addGoodsFormRules:{}
+      addGoodsFormRules: {
+        goods_name: [
+          { required: true, message: '商品名称不能为空', trigger: 'blur' }
+        ],
+        goods_price: [
+          { required: true, message: '商品价格不能为空', trigger: 'blur' }
+        ],
+        goods_number: [
+          { required: true, message: '商品数量不能为空', trigger: 'blur' }
+        ],
+        goods_weight: [
+          { required: true, message: '商品重量不能为空', trigger: 'blur' }
+        ],
+        goods_cat: [
+          { required: true, message: '您没有选择商品分类', trigger: 'blur' }
+        ]
+      },
+      // 商品分类数组
+      cateList: [],
+      // 级联选择器的配置
+      props: {
+        expandTrigger: 'hover',
+        label: 'cat_name',
+        value: 'cat_id',
+        children: 'children'
+      }
     }
   },
-  created() {},
-  methods: {}
+  created() {
+    this.getCateList()
+  },
+  methods: {
+    async getCateList() {
+      const { data: res } = await this.$http.get('categories')
+      if (res.meta.status !== 200) {
+        return this.$message.error(
+          '获取商品分类信息失败，这将导致分类选择框无法正常使用'
+        )
+      }
+      this.cateList = res.data
+      console.log(this.cateList)
+    },
+    // 级联选择框状态发生变化时触发
+    handleChange() {
+      if (this.addGoodsForm.goods_cat.length !== 3) {
+        this.addGoodsForm.goods_cat = []
+      }
+    },
+    // 在tab页切换之前调用
+    beforeTabsLeave(activeName, oldActiveName) {
+      console.log(activeName, oldActiveName)
+    }
+  }
 }
 </script>
 
