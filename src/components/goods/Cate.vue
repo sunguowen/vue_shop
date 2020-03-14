@@ -269,15 +269,11 @@ export default {
       this.$refs.modifyCateFormRef.resetFields()
     },
     deleteCate(cateInfo) {
-      const confirmResult = this.$confirm(
-        '确定永久删除当前商品分类吗？',
-        '提示',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }
-      )
+      this.$confirm('确定永久删除当前商品分类吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
         .then(async conf => {
           const { data: res } = await this.$http.delete(
             'categories/' + cateInfo.cat_id
