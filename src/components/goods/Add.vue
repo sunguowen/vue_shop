@@ -222,7 +222,6 @@ export default {
         )
       }
       this.cateList = res.data
-      // console.log(this.cateList)
     },
     // 级联选择框状态发生变化时触发
     handleChange() {
@@ -232,7 +231,6 @@ export default {
     },
     // 在tab页切换之前调用
     beforeTabsLeave(activeName, oldActiveName) {
-      // console.log(activeName, oldActiveName)
       if (oldActiveName === '0' && this.addGoodsForm.goods_cat.length !== 3) {
         this.$message.error('请先选择商品分类数据。')
         return false
@@ -248,7 +246,6 @@ export default {
           }
         )
         if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
-        // console.log(res.data)
         res.data.forEach(item => {
           item.attr_vals =
             item.attr_vals.length === 0 ? [] : item.attr_vals.split(',')
@@ -262,19 +259,16 @@ export default {
           }
         )
         if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
-        console.log(res.data)
         this.onlyTableData = res.data
       }
     },
     // 上传图片点击预览时会触发这个函数
     handlePreview(file) {
-      // console.log(file)
       this.previewPath = file.response.data.url
       this.previewDialogVisible = true
     },
     // 处理移除图片的操作
     handleRemove(file) {
-      console.log(file)
       const filePath = file.response.data.tmp_path
       const index = this.addGoodsForm.pics.findIndex(x => x.pic === filePath)
       this.addGoodsForm.pics.splice(index, 1)
@@ -283,7 +277,6 @@ export default {
     handleSuccess(response) {
       const picInfo = { pic: response.data.tmp_path }
       this.addGoodsForm.pics.push(picInfo)
-      // console.log(this.addGoodsForm)
     },
     // 添加商品的方法
     addGoods() {
@@ -306,7 +299,6 @@ export default {
           this.addGoodsForm.attrs.push(newInfo)
         })
         newAddGoodsForm.attrs = this.addGoodsForm.attrs
-        // console.log(newAddGoodsForm)
         const { data: res } = await this.$http.post('goods', newAddGoodsForm)
         if (res.meta.status !== 201) return this.$message.error(res.meta.msg)
         this.$message.success(res.meta.msg)
