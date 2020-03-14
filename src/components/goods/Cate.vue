@@ -11,7 +11,9 @@
       <!-- 添加商品行 -->
       <el-row>
         <el-col :span="6">
-          <el-button type="primary" @click="showAddGoodsCateDialog">添加分类</el-button>
+          <el-button type="primary" @click="showAddGoodsCateDialog"
+            >添加分类</el-button
+          >
         </el-col>
       </el-row>
       <!-- 商品分类列表 -->
@@ -29,18 +31,27 @@
         :selection-type="false"
         :expand-type="false"
       >
-        <template slot="isUse" scope="scope">
-          <i v-if="scope.row.cat_deleted === false" class="el-icon-success iconsuccess"></i>
+        <template slot="isUse" slot-scope="scope">
+          <i
+            v-if="scope.row.cat_deleted === false"
+            class="el-icon-success iconsuccess"
+          ></i>
           <i v-else class="el-icon-error iconerror"></i>
         </template>
-        <template slot="sortCate" scope="scope">
+        <template slot="sortCate" slot-scope="scope">
           <el-tag v-if="scope.row.cat_level === 0">一级</el-tag>
-          <el-tag type="success" v-else-if="scope.row.cat_level === 1">二级</el-tag>
+          <el-tag type="success" v-else-if="scope.row.cat_level === 1"
+            >二级</el-tag
+          >
           <el-tag type="warning" v-else>三级</el-tag>
         </template>
-        <template slot="operation" scope="scope">
+        <template slot="operation" slot-scope="scope">
           <!-- {{scope.row.cat_id}} -->
-          <el-button type="primary" size="small" @click="showModifyDialog(scope.row)">
+          <el-button
+            type="primary"
+            size="small"
+            @click="showModifyDialog(scope.row)"
+          >
             <i class="el-icon-edit"></i>编辑
           </el-button>
           <el-button type="danger" size="small" @click="deleteCate(scope.row)">
