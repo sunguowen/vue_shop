@@ -26,8 +26,7 @@ const Roles = () =>
   import(
     /* webpackChunkName: "users_rights_roles" */ '../components/power/Roles.vue'
   )
-
-// import Cate from '../components/goods/Cate.vue'
+// imSport Cate from '../components/goods/Cate.vue'
 const Cate = () =>
   import(/* webpackChunkName: "cate_params" */ '../components/goods/Cate.vue')
 // import Params from '../components/goods/Params.vue'
@@ -55,34 +54,55 @@ const Report = () =>
   )
 Vue.use(VueRouter)
 
-const routes = [
-  { path: '/', redirect: '/login' },
-  { path: '/login', component: Login },
-  {
-    path: '/home',
-    redirect: '/welcome',
-    component: Home,
-    children: [
-      { path: '/welcome', component: Welcome },
-      { path: '/users', component: Users },
-      { path: '/rights', component: Rights },
-      { path: '/roles', component: Roles },
-      { path: '/categories', component: Cate },
-      { path: '/params', component: Params },
-      { path: '/goods', component: Goods },
-      { path: '/goods/add', component: Add },
-      { path: '/orders', component: Order },
-      { path: '/reports', component: Report }
-    ]
-  }
-]
+// const routes = [
+//   { path: '/', redirect: '/login', component: Login },
+//   // { path: '/login', component: Login },
+//   {
+//     path: '/home',
+//     redirect: '/welcome',
+//     component: Home,
+//     children: [
+//       { path: '/welcome', component: Welcome },
+//       { path: '/users', component: Users },
+//       { path: '/rights', component: Rights },
+//       { path: '/roles', component: Roles },
+//       { path: '/categories', component: Cate },
+//       { path: '/params', component: Params },
+//       { path: '/goods', component: Goods },
+//       { path: '/goods/add', component: Add },
+//       { path: '/orders', component: Order },
+//       { path: '/reports', component: Report }
+//     ]
+//   }
+// ]
 
 const router = new VueRouter({
-  routes
+  routes: [
+    // { path: '/', redirect: '/login', component: Login },
+    { path: '/login', component: Login },
+    {
+      path: '/home',
+      redirect: '/welcome',
+      component: Home,
+      children: [
+        { path: '/welcome', component: Welcome },
+        { path: '/users', component: Users },
+        { path: '/rights', component: Rights },
+        { path: '/roles', component: Roles },
+        { path: '/categories', component: Cate },
+        { path: '/params', component: Params },
+        { path: '/goods', component: Goods },
+        { path: '/goods/add', component: Add },
+        { path: '/orders', component: Order },
+        { path: '/reports', component: Report }
+      ]
+    }
+  ]
 })
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
+  if (to.path === '/') next('/login')
   // to是用户将要访问的页面
   if (to.path === '/login') next()
   // 获取token
