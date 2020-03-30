@@ -28,6 +28,7 @@ axios.interceptors.response.use(config => {
   NProgress.done()
   return config
 })
+// 时间格式化过滤器
 Vue.filter('formatDate', function(originVal) {
   const date = new Date(originVal)
   const year = date.getFullYear()
@@ -42,6 +43,7 @@ Vue.filter('formatDate', function(originVal) {
 Vue.prototype.$http = axios
 Vue.config.productionTip = false
 Vue.component('tree-table', TreeTable)
+// 当一个vue的实例对象没el:选项时，是处于未挂载的状态，此时需要使用$mount()手动挂载到一个DOM元素.
 new Vue({
   router,
   render: h => h(App)
