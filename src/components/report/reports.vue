@@ -55,10 +55,12 @@ export default {
   created() {},
   // mounted执行时页面上的元素已经渲染完毕 DOM
   async mounted() {
+    // 初始化一个EChart实例
     var myCharts = echarts.init(document.getElementById('main'))
     const { data: res } = await this.$http.get('reports/type/1')
     if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
     const result = _.merge(res.data, this.options)
+    console.log(result)
     myCharts.setOption(result)
   },
   methods: {}
