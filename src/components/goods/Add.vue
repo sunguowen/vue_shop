@@ -9,13 +9,7 @@
     <!-- 卡片展示区域 -->
     <el-card>
       <el-row>
-        <el-alert
-          title="添加商品信息"
-          type="info"
-          center
-          show-icon
-          :closable="false"
-        ></el-alert>
+        <el-alert title="添加商品信息" type="info" center show-icon :closable="false"></el-alert>
       </el-row>
       <el-row>
         <!-- 步骤条 -->
@@ -47,22 +41,13 @@
               <el-input v-model="addGoodsForm.goods_name"></el-input>
             </el-form-item>
             <el-form-item label="商品价格" prop="goods_price">
-              <el-input
-                v-model="addGoodsForm.goods_price"
-                type="number"
-              ></el-input>
+              <el-input v-model="addGoodsForm.goods_price" type="number"></el-input>
             </el-form-item>
             <el-form-item label="商品重量" prop="goods_weight">
-              <el-input
-                v-model="addGoodsForm.goods_weight"
-                type="number"
-              ></el-input>
+              <el-input v-model="addGoodsForm.goods_weight" type="number"></el-input>
             </el-form-item>
             <el-form-item label="商品数量" prop="goods_number">
-              <el-input
-                v-model="addGoodsForm.goods_number"
-                type="number"
-              ></el-input>
+              <el-input v-model="addGoodsForm.goods_number" type="number"></el-input>
             </el-form-item>
             <el-form-item label="商品分类" prop="goods_cat">
               <el-cascader
@@ -75,11 +60,7 @@
           </el-tab-pane>
           <el-tab-pane label="商品参数" name="1">
             <!-- 表单的动态参数面板 -->
-            <el-form-item
-              :key="item.attr_id"
-              v-for="item in manyTableData"
-              :label="item.attr_name"
-            >
+            <el-form-item :key="item.attr_id" v-for="item in manyTableData" :label="item.attr_name">
               <!-- 复选框组 -->
               <el-checkbox-group v-model="item.attr_vals">
                 <el-checkbox
@@ -93,11 +74,7 @@
           </el-tab-pane>
           <el-tab-pane label="商品属性" name="2">
             <!-- 商品静态属性 -->
-            <el-form-item
-              v-for="item in onlyTableData"
-              :key="item.attr_id"
-              :label="item.attr_name"
-            >
+            <el-form-item v-for="item in onlyTableData" :key="item.attr_id" :label="item.attr_name">
               <el-input v-model="item.attr_vals"></el-input>
             </el-form-item>
           </el-tab-pane>
@@ -112,9 +89,7 @@
               :on-success="handleSuccess"
             >
               <el-button size="small" type="primary">点击上传</el-button>
-              <div slot="tip" class="el-upload__tip">
-                只能上传jpg/png文件，且不超过500kb
-              </div>
+              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
             </el-upload>
           </el-tab-pane>
           <el-tab-pane label="商品内容" name="4">
@@ -128,19 +103,13 @@
               @ready="onEditorReady($event)"
             />
             <!-- 添加商品的按钮 -->
-            <el-button type="primary" style="marginTop: 20px" @click="addGoods"
-              >添加商品</el-button
-            >
+            <el-button type="primary" style="marginTop: 20px" @click="addGoods">添加商品</el-button>
           </el-tab-pane>
         </el-tabs>
       </el-form>
     </el-card>
     <!-- 预览图片的对对话框 -->
-    <el-dialog
-      title="图片预览"
-      :visible.sync="previewDialogVisible"
-      width="50%"
-    >
+    <el-dialog title="图片预览" :visible.sync="previewDialogVisible" width="50%">
       <span>
         <img :src="previewPath" style="width:100%" />
       </span>
